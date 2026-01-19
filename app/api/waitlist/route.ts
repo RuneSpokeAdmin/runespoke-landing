@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
 
 // Email validation regex
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Simple in-memory storage for now (will be replaced with database)
+// For production, use Supabase, Vercel KV, or another database
+const waitlist = new Set<string>();
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,40 +19,42 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Define the data directory and file path
-    const dataDir = path.join(process.cwd(), 'data');
-    const filePath = path.join(dataDir, 'waitlist.json');
+    const normalizedEmail = email.toLowerCase();
 
-    // Ensure data directory exists
-    await fs.mkdir(dataDir, { recursive: true });
+    // For now, just log to Vercel logs (you can see these in Vercel dashboard)
+    console.log(`[WAITLIST SIGNUP] Email: ${normalizedEmail}, Time: ${new Date().toISOString()}`);
 
-    // Read existing data or create new array
-    let waitlist: { email: string; timestamp: string }[] = [];
-    try {
-      const fileContent = await fs.readFile(filePath, 'utf-8');
-      waitlist = JSON.parse(fileContent);
-    } catch (error) {
-      // File doesn't exist yet, start with empty array
-    }
+    // Option 1: Send to webhook (uncomment and add your webhook URL)
+    // await fetch('YOUR_WEBHOOK_URL', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ email: normalizedEmail, timestamp: new Date().toISOString() })
+    // });
 
-    // Check if email already exists
-    if (waitlist.some(entry => entry.email.toLowerCase() === email.toLowerCase())) {
+    // Option 2: Save to Supabase (uncomment and add your Supabase credentials)
+    // const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    // const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+    // if (supabaseUrl && supabaseKey) {
+    //   const response = await fetch(`${supabaseUrl}/rest/v1/waitlist`, {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'apikey': supabaseKey,
+    //       'Authorization': `Bearer ${supabaseKey}`
+    //     },
+    //     body: JSON.stringify({ email: normalizedEmail, created_at: new Date().toISOString() })
+    //   });
+    // }
+
+    // Check if already exists (in-memory for this session only)
+    if (waitlist.has(normalizedEmail)) {
       return NextResponse.json(
         { message: 'You\'re already on the waitlist!' },
         { status: 200 }
       );
     }
 
-    // Add new email to waitlist
-    waitlist.push({
-      email: email.toLowerCase(),
-      timestamp: new Date().toISOString()
-    });
-
-    // Save updated waitlist
-    await fs.writeFile(filePath, JSON.stringify(waitlist, null, 2));
-
-    console.log(`✅ Added to waitlist: ${email}`);
+    waitlist.add(normalizedEmail);
 
     return NextResponse.json(
       { message: 'Successfully joined the waitlist!' },
@@ -58,10 +62,27 @@ export async function POST(request: NextRequest) {
     );
 
   } catch (error) {
-    console.error('Waitlist error:', error);
+    console.error('[WAITLIST ERROR]:', error);
     return NextResponse.json(
       { error: 'Failed to process request. Please try again.' },
       { status: 500 }
     );
   }
+}
+
+// GET endpoint to retrieve emails (protect this in production!)
+export async function GET(request: NextRequest) {
+  // Simple auth check - replace with proper auth
+  const authHeader = request.headers.get('authorization');
+
+  // Set a secret key in your environment variables
+  if (authHeader !== `Bearer ${process.env.WAITLIST_SECRET}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  return NextResponse.json({
+    emails: Array.from(waitlist),
+    count: waitlist.size,
+    note: 'This is temporary in-memory storage. Set up database for persistence.'
+  });
 }

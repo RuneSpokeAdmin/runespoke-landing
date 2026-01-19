@@ -44,19 +44,18 @@ export function HeroSection() {
 
   return (
     <section className="relative py-20 bg-gradient-to-br from-blue-50/80 via-indigo-50/80 to-purple-50/80 backdrop-blur-sm">
-      {/* Beta Badge */}
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: 0.1, type: "spring" }}
-        className="absolute top-8 right-8"
-      >
-        <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-6 py-2 rounded-full font-bold text-lg shadow-lg">
-          🚀 BETA LAUNCHING SOON
-        </div>
-      </motion.div>
-
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+        {/* Beta Badge - Centered */}
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.1, type: "spring" }}
+          className="flex justify-center mb-8"
+        >
+          <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-6 py-2 rounded-full font-bold text-lg shadow-lg">
+            BETA LAUNCHING SOON
+          </div>
+        </motion.div>
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
