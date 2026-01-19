@@ -30,7 +30,7 @@ const mainFeatures = [
   },
   {
     name: 'Multi-AI Provider Support',
-    description: 'Leverage Claude Sonnet, GPT-4, Google Gemini, and other AI providers for intelligent automation, code assistance, and workflow optimization.',
+    description: 'Leverage Claude, ChatGPT, Gemini, Local LLMs and other AI providers for intelligent automation, code assistance, and workflow optimization.',
     icon: SparklesIcon,
     category: 'AI',
     status: 'active'
