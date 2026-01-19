@@ -12,7 +12,7 @@ import { PricingSection } from '@/components/home/pricing-section';
 import { CTASection } from '@/components/home/cta-section';
 import { Footer } from '@/components/home/footer';
 
-export default function Home() {
+export default function HomePage() {
   const [isMonthly, setIsMonthly] = useState(true);
 
   return (

@@ -1,0 +1,11 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<linearGradient id="jb-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#FE2857;stop-opacity:1" />
+<stop offset="30%" style="stop-color:#CB3C7E;stop-opacity:1" />
+<stop offset="60%" style="stop-color:#9B47A8;stop-opacity:1" />
+<stop offset="100%" style="stop-color:#7649D0;stop-opacity:1" />
+</linearGradient>
+<rect width="32" height="32" rx="2" fill="url(#jb-gradient)"/>
+<rect x="4" y="21" width="12" height="8" fill="#000"/>
+<text x="6" y="27" font-family="Arial, sans-serif" font-size="5" font-weight="bold" fill="#FFF">JB</text>
+</svg>
