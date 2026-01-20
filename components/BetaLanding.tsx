@@ -92,18 +92,20 @@ export default function BetaLanding() {
                   <Image
                     src="/runespoke-logo.png"
                     alt="RuneSpoke"
-                    width={isScrolled ? 80 : 140}
-                    height={isScrolled ? 80 : 140}
+                    width={140}
+                    height={140}
                     className={`transition-all duration-300 ${
-                      isScrolled ? 'h-20 w-20' : 'h-32 w-32'
+                      isScrolled
+                        ? 'h-12 w-12 sm:h-16 sm:w-16 md:h-20 md:w-20'
+                        : 'h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 lg:h-32 lg:w-32'
                     }`}
                   />
                 </Link>
               </div>
-              <div className="flex items-center space-x-8">
-                <span className="text-gray-300">Documentation Coming Soon</span>
-                <span className="text-gray-300">•</span>
-                <span className="text-gray-300">Contact: hello@runespoke.ai</span>
+              <div className="hidden sm:flex items-center space-x-4 md:space-x-8 text-gray-300 text-sm md:text-base">
+                <span className="hidden md:inline">Documentation Coming Soon</span>
+                <span className="hidden md:inline">•</span>
+                <span>hello@runespoke.ai</span>
               </div>
             </div>
           </div>
@@ -117,10 +119,10 @@ export default function BetaLanding() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.1, type: "spring" }}
-              className="absolute top-8 right-8"
+              className="absolute top-4 sm:top-8 right-2 sm:right-8"
             >
-              <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-6 py-2 rounded-full font-bold text-lg shadow-lg">
-                🚀 BETA LAUNCHING SOON
+              <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-3 sm:px-6 py-1 sm:py-2 rounded-full font-bold text-sm sm:text-lg shadow-lg">
+                BETA LAUNCHING SOON
               </div>
             </motion.div>
 

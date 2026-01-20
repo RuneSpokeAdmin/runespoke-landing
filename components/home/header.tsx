@@ -29,18 +29,20 @@ export function Header() {
               <Image
                 src="/runespoke-logo.png"
                 alt="RuneSpoke"
-                width={isScrolled ? 80 : 140}
-                height={isScrolled ? 80 : 140}
+                width={140}
+                height={140}
                 className={`transition-all duration-300 ${
-                  isScrolled ? 'h-20 w-20' : 'h-32 w-32'
+                  isScrolled
+                    ? 'h-12 w-12 sm:h-16 sm:w-16 md:h-20 md:w-20'
+                    : 'h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 lg:h-32 lg:w-32'
                 }`}
               />
             </Link>
           </div>
-          <div className="flex items-center space-x-8 text-gray-300">
-            <span>Documentation Coming Soon</span>
-            <span>•</span>
-            <span>Contact: hello@runespoke.ai</span>
+          <div className="hidden sm:flex items-center space-x-4 md:space-x-8 text-gray-300 text-sm md:text-base">
+            <span className="hidden md:inline">Documentation Coming Soon</span>
+            <span className="hidden md:inline">•</span>
+            <span>hello@runespoke.ai</span>
           </div>
         </div>
       </div>
