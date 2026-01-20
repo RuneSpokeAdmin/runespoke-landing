@@ -14,7 +14,7 @@ export async function getEmailConfig(): Promise<EmailConfig> {
   if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
     return {
       provider: 'aws-ses',
-      fromEmail: process.env.AWS_SES_FROM_EMAIL || 'hello@runespoke.com',
+      fromEmail: process.env.AWS_SES_FROM_EMAIL || 'hello@runespoke.ai',
       awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID,
       awsSecretKey: process.env.AWS_SECRET_ACCESS_KEY,
       awsRegion: process.env.AWS_REGION || 'us-east-1'
@@ -25,7 +25,7 @@ export async function getEmailConfig(): Promise<EmailConfig> {
   if (process.env.SENDGRID_API_KEY) {
     return {
       provider: 'sendgrid',
-      fromEmail: process.env.SENDGRID_FROM_EMAIL || 'hello@runespoke.com',
+      fromEmail: process.env.SENDGRID_FROM_EMAIL || 'hello@runespoke.ai',
       apiKey: process.env.SENDGRID_API_KEY
     };
   }
@@ -116,7 +116,7 @@ What you can expect:
 • Bring your own AI - no platform markup
 • Support for Claude, ChatGPT, Gemini, and Local LLMs
 • Universal IDE integration
-• Self-hosted options for complete control
+• Enterprise-grade security and compliance
 
 Best regards,
 The RuneSpoke Team`,
@@ -152,14 +152,14 @@ The RuneSpoke Team`,
         <div class="feature-item">✓ Bring your own AI - no platform markup</div>
         <div class="feature-item">✓ Support for Claude, ChatGPT, Gemini, and Local LLMs</div>
         <div class="feature-item">✓ Universal IDE integration</div>
-        <div class="feature-item">✓ Self-hosted options for complete control</div>
+        <div class="feature-item">✓ Enterprise-grade security and compliance</div>
       </div>
 
       <p>Keep an eye on your inbox for your exclusive beta invitation!</p>
 
       <div class="footer">
         <p>Best regards,<br>The RuneSpoke Team</p>
-        <p style="font-size: 12px;">If you have any questions, reach out to hello@runespoke.com</p>
+        <p style="font-size: 12px;">If you have any questions, reach out to hello@runespoke.ai</p>
       </div>
     </div>
   </div>

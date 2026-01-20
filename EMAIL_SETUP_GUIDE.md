@@ -47,7 +47,7 @@
 
 1. **Verify your email/domain in AWS SES:**
    - Go to AWS SES Console → Verified identities
-   - Add `hello@runespoke.com` or verify entire `runespoke.com` domain
+   - Add `hello@runespoke.ai` or verify entire `runespoke.com` domain
    - Follow verification steps (email or DNS)
 
 2. **Get out of sandbox mode (for production):**
@@ -58,7 +58,7 @@
    - `AWS_ACCESS_KEY_ID = your-access-key`
    - `AWS_SECRET_ACCESS_KEY = your-secret-key`
    - `AWS_REGION = us-east-1` (or your preferred region)
-   - `AWS_SES_FROM_EMAIL = hello@runespoke.com`
+   - `AWS_SES_FROM_EMAIL = hello@runespoke.ai`
 
 4. **Redeploy** - Users now get confirmation emails!
 
@@ -73,7 +73,7 @@
 3. **Add to Vercel Environment Variables:**
    - Go to Vercel Dashboard → Settings → Environment Variables
    - Add: `RESEND_API_KEY = re_xxxxxxxxxxxxx`
-   - Add: `RESEND_FROM_EMAIL = hello@runespoke.com`
+   - Add: `RESEND_FROM_EMAIL = hello@runespoke.ai`
 4. **Domain Verification (Optional for custom domain):**
    - If you want to send from @runespoke.com
    - Go to Resend → Domains → Add Domain
@@ -121,7 +121,7 @@ What you can expect:
 • Bring your own AI - no platform markup
 • Support for Claude, ChatGPT, Gemini, and Local LLMs
 • Universal IDE integration
-• Self-hosted options for complete control
+• Enterprise-grade security and compliance
 
 Best regards,
 The RuneSpoke Team
@@ -145,4 +145,4 @@ Your API automatically tries storage in this order:
 
 - All signups are logged in Vercel Dashboard → Functions → Logs
 - Even without setup, you can see emails there
-- Contact: hello@runespoke.com
+- Contact: hello@runespoke.ai

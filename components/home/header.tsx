@@ -40,7 +40,7 @@ export function Header() {
           <div className="flex items-center space-x-8 text-gray-300">
             <span>Documentation Coming Soon</span>
             <span>•</span>
-            <span>Contact: hello@runespoke.com</span>
+            <span>Contact: hello@runespoke.ai</span>
           </div>
         </div>
       </div>

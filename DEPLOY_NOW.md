@@ -60,9 +60,9 @@ After adding environment variables:
 ## 📧 Email Notes
 
 - Currently using Resend's default domain (`onboarding@resend.dev`)
-- To use `hello@runespoke.com`:
+- To use `hello@runespoke.ai`:
   1. Go to https://resend.com/domains
-  2. Add and verify `runespoke.com` domain
+  2. Add and verify `runespoke.ai` domain
   3. Update `RESEND_FROM_EMAIL` in Vercel
 
 ## 🎉 You're Done!

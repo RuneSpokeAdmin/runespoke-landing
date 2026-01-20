@@ -64,7 +64,7 @@ export function HeroSection() {
           <div className="flex flex-wrap justify-center gap-8 text-base font-medium text-gray-700">
             <span>No Platform Markup</span>
             <span className="text-gray-400">•</span>
-            <span>Self-Hosted Option</span>
+            <span>All Major IDEs</span>
             <span className="text-gray-400">•</span>
             <span>Enterprise Security</span>
           </div>

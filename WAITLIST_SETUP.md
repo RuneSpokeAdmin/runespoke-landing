@@ -67,4 +67,4 @@ To export current session emails (until you set up persistence):
 3. Click "Download CSV"
 
 ## Need Help?
-Contact: hello@runespoke.com
+Contact: hello@runespoke.ai

@@ -39,15 +39,6 @@ const features = [
     ]
   },
   {
-    category: 'Self-Hosted Options',
-    items: [
-      { feature: 'Issue Tracker (GitHub Alternative)', runespoke: true, github: false, gitlab: true, jenkins: false, circleci: false },
-      { feature: 'Wiki & Documentation', runespoke: true, github: true, gitlab: true, jenkins: false, circleci: false },
-      { feature: 'Code Review System', runespoke: true, github: true, gitlab: true, jenkins: false, circleci: false },
-      { feature: 'Team Collaboration Tools', runespoke: true, github: true, gitlab: true, jenkins: false, circleci: false }
-    ]
-  },
-  {
     category: 'Enterprise Features',
     items: [
       { feature: 'SSO/SAML Integration', runespoke: true, github: true, gitlab: true, jenkins: true, circleci: true },

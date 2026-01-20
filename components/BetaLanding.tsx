@@ -103,7 +103,7 @@ export default function BetaLanding() {
               <div className="flex items-center space-x-8">
                 <span className="text-gray-300">Documentation Coming Soon</span>
                 <span className="text-gray-300">•</span>
-                <span className="text-gray-300">Contact: hello@runespoke.com</span>
+                <span className="text-gray-300">Contact: hello@runespoke.ai</span>
               </div>
             </div>
           </div>
