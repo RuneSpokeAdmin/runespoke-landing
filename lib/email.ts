@@ -148,8 +148,8 @@ To unsubscribe from our waitlist, reply to this email with "UNSUBSCRIBE" or clic
 https://runespoke-landing.vercel.app/unsubscribe?email=${encodeURIComponent(email)}
 
 RuneSpoke Hub
-1234 Tech Boulevard, Suite 100
-San Francisco, CA 94105`,
+1250 - I Newell Ave #318
+Walnut Creek, CA 94596`,
     html: `
 <!DOCTYPE html>
 <html>
@@ -202,8 +202,8 @@ San Francisco, CA 94105`,
         </p>
         <p>
           RuneSpoke Hub<br>
-          1234 Tech Boulevard, Suite 100<br>
-          San Francisco, CA 94105
+          1250 - I Newell Ave #318<br>
+          Walnut Creek, CA 94596
         </p>
       </div>
     </div>

@@ -59,7 +59,7 @@ export default function PrivacyPage() {
               <br />
               Email: hello@runespoke.ai
               <br />
-              Address: 1234 Tech Boulevard, Suite 100, San Francisco, CA 94105
+              Address: 1250 - I Newell Ave #318, Walnut Creek, CA 94596
             </p>
           </section>
         </div>
