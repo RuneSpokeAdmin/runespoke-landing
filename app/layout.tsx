@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "RuneSpoke Hub - AI-Powered Development Platform",
-  description: "Join the beta for RuneSpoke Hub - The complete AI-powered development platform with 90% cost savings compared to GitHub Copilot. Support for Claude, ChatGPT, Gemini, and Local LLMs.",
+  description: "Join the beta for RuneSpoke Hub - The complete AI-powered development platform. Use your own AI accounts with Claude, ChatGPT, Gemini, and Local LLMs. No platform markup.",
 };
 
 export default function RootLayout({

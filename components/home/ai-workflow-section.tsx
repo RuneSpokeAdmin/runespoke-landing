@@ -35,9 +35,9 @@ export function AIWorkflowSection() {
   ];
 
   const metrics = [
-    { value: '80%', label: 'Fewer Bugs' },
-    { value: '60%', label: 'Faster Deployment' },
-    { value: '90%', label: 'Cost Savings' },
+    { value: '20+', label: 'Integrations' },
+    { value: '4+', label: 'AI Providers' },
+    { value: '24/7', label: 'Automation' },
   ];
 
   return (
