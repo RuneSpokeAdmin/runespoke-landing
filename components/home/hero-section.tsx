@@ -53,30 +53,20 @@ export function HeroSection() {
           </button>
         </motion.div>
 
-        {/* Beta Features */}
+        {/* Beta Features - More sophisticated presentation */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="mt-12 flex flex-wrap justify-center gap-6 text-sm text-gray-600"
+          className="mt-12 text-center"
         >
-          <div className="flex items-center">
-            <svg className="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-            </svg>
-            Use Your Own AI Accounts
-          </div>
-          <div className="flex items-center">
-            <svg className="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-            </svg>
-            Bring Your Own AI
-          </div>
-          <div className="flex items-center">
-            <svg className="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-            </svg>
-            Enterprise Ready
+          <p className="text-sm text-gray-500 uppercase tracking-wide mb-3">Join 500+ developers already on the waitlist</p>
+          <div className="flex flex-wrap justify-center gap-8 text-base font-medium text-gray-700">
+            <span>No Platform Markup</span>
+            <span className="text-gray-400">•</span>
+            <span>Self-Hosted Option</span>
+            <span className="text-gray-400">•</span>
+            <span>Enterprise Security</span>
           </div>
         </motion.div>
       </div>

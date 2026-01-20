@@ -86,8 +86,8 @@ export function AIWorkflowSection() {
 
         {/* Results Section */}
         <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl p-8 md:p-12 text-white text-center">
-          <h3 className="text-2xl md:text-3xl font-bold mb-8">Result: 10x Faster Development</h3>
-          
+          <h3 className="text-2xl md:text-3xl font-bold mb-8">Bring Your Own AI - No Platform Markup</h3>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {metrics.map((metric) => (
               <div key={metric.label}>

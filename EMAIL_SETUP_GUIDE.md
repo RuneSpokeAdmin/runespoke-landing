@@ -118,7 +118,7 @@ You'll be among the first to know when we launch our beta
 program. Keep an eye on your inbox for your exclusive invitation!
 
 What you can expect:
-• Use your own AI provider accounts - no markup
+• Bring your own AI - no platform markup
 • Support for Claude, ChatGPT, Gemini, and Local LLMs
 • Universal IDE integration
 • Self-hosted options for complete control
