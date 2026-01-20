@@ -1,33 +1,99 @@
+import crypto from 'crypto';
+
 interface EmailConfig {
-  apiKey: string;
+  provider: 'aws-ses' | 'sendgrid' | 'resend' | 'none';
   fromEmail: string;
-  provider: 'resend' | 'sendgrid' | 'none';
+  apiKey?: string;
+  awsAccessKeyId?: string;
+  awsSecretKey?: string;
+  awsRegion?: string;
 }
 
 export async function getEmailConfig(): Promise<EmailConfig> {
-  // Check for Resend
-  if (process.env.RESEND_API_KEY) {
+  // Check for AWS SES (prioritized)
+  if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
     return {
-      apiKey: process.env.RESEND_API_KEY,
-      fromEmail: process.env.RESEND_FROM_EMAIL || 'hello@runespoke.com',
-      provider: 'resend'
+      provider: 'aws-ses',
+      fromEmail: process.env.AWS_SES_FROM_EMAIL || 'hello@runespoke.com',
+      awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      awsSecretKey: process.env.AWS_SECRET_ACCESS_KEY,
+      awsRegion: process.env.AWS_REGION || 'us-east-1'
     };
   }
 
   // Check for SendGrid
   if (process.env.SENDGRID_API_KEY) {
     return {
-      apiKey: process.env.SENDGRID_API_KEY,
+      provider: 'sendgrid',
       fromEmail: process.env.SENDGRID_FROM_EMAIL || 'hello@runespoke.com',
-      provider: 'sendgrid'
+      apiKey: process.env.SENDGRID_API_KEY
+    };
+  }
+
+  // Check for Resend
+  if (process.env.RESEND_API_KEY) {
+    return {
+      provider: 'resend',
+      fromEmail: process.env.RESEND_FROM_EMAIL || 'hello@runespoke.com',
+      apiKey: process.env.RESEND_API_KEY
     };
   }
 
   return {
-    apiKey: '',
-    fromEmail: '',
-    provider: 'none'
+    provider: 'none',
+    fromEmail: ''
   };
+}
+
+// AWS SES v4 signature helper
+function createAWSSignature(
+  method: string,
+  url: string,
+  headers: Record<string, string>,
+  payload: string,
+  secretKey: string,
+  region: string,
+  service: string
+): string {
+  const datetime = headers['x-amz-date'];
+  const date = datetime.substring(0, 8);
+
+  // Create canonical request
+  const canonicalUri = new URL(url).pathname;
+  const canonicalQuerystring = '';
+  const canonicalHeaders = Object.keys(headers)
+    .sort()
+    .map(key => `${key}:${headers[key]}`)
+    .join('\n') + '\n';
+  const signedHeaders = Object.keys(headers).sort().join(';');
+  const payloadHash = crypto.createHash('sha256').update(payload).digest('hex');
+
+  const canonicalRequest = [
+    method,
+    canonicalUri,
+    canonicalQuerystring,
+    canonicalHeaders,
+    signedHeaders,
+    payloadHash
+  ].join('\n');
+
+  // Create string to sign
+  const algorithm = 'AWS4-HMAC-SHA256';
+  const credentialScope = `${date}/${region}/${service}/aws4_request`;
+  const stringToSign = [
+    algorithm,
+    datetime,
+    credentialScope,
+    crypto.createHash('sha256').update(canonicalRequest).digest('hex')
+  ].join('\n');
+
+  // Calculate signature
+  const kDate = crypto.createHmac('sha256', 'AWS4' + secretKey).update(date).digest();
+  const kRegion = crypto.createHmac('sha256', kDate).update(region).digest();
+  const kService = crypto.createHmac('sha256', kRegion).update(service).digest();
+  const kSigning = crypto.createHmac('sha256', kService).update('aws4_request').digest();
+
+  return crypto.createHmac('sha256', kSigning).update(stringToSign).digest('hex');
 }
 
 export async function sendWaitlistConfirmation(email: string): Promise<boolean> {
@@ -39,8 +105,6 @@ export async function sendWaitlistConfirmation(email: string): Promise<boolean> 
   }
 
   const emailContent = {
-    to: email,
-    from: config.fromEmail,
     subject: 'Welcome to RuneSpoke Hub Beta Waitlist!',
     text: `Thank you for joining the RuneSpoke Hub Beta waitlist!
 
@@ -104,29 +168,73 @@ The RuneSpoke Team`,
   };
 
   try {
-    if (config.provider === 'resend') {
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${config.apiKey}`,
-          'Content-Type': 'application/json',
+    if (config.provider === 'aws-ses') {
+      const region = config.awsRegion || 'us-east-1';
+      const service = 'ses';
+      const host = `email.${region}.amazonaws.com`;
+      const endpoint = `https://${host}/v2/email/outbound-emails`;
+
+      const payload = JSON.stringify({
+        Content: {
+          Simple: {
+            Body: {
+              Html: {
+                Charset: 'UTF-8',
+                Data: emailContent.html
+              },
+              Text: {
+                Charset: 'UTF-8',
+                Data: emailContent.text
+              }
+            },
+            Subject: {
+              Charset: 'UTF-8',
+              Data: emailContent.subject
+            }
+          }
         },
-        body: JSON.stringify({
-          from: `RuneSpoke Hub <${config.fromEmail}>`,
-          to: [email],
-          subject: emailContent.subject,
-          text: emailContent.text,
-          html: emailContent.html,
-        }),
+        Destination: {
+          ToAddresses: [email]
+        },
+        FromEmailAddress: `RuneSpoke Hub <${config.fromEmail}>`
+      });
+
+      const datetime = new Date().toISOString().replace(/[:-]|\.\d{3}/g, '');
+      const headers: Record<string, string> = {
+        'content-type': 'application/json',
+        'host': host,
+        'x-amz-date': datetime
+      };
+
+      // Create AWS signature
+      const signature = createAWSSignature(
+        'POST',
+        endpoint,
+        headers,
+        payload,
+        config.awsSecretKey!,
+        region,
+        service
+      );
+
+      const credentialScope = `${datetime.substring(0, 8)}/${region}/${service}/aws4_request`;
+      const signedHeaders = Object.keys(headers).sort().join(';');
+
+      headers['Authorization'] = `AWS4-HMAC-SHA256 Credential=${config.awsAccessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers,
+        body: payload
       });
 
       if (!response.ok) {
         const error = await response.text();
-        console.error('[EMAIL] Resend error:', error);
+        console.error('[EMAIL] AWS SES error:', error);
         return false;
       }
 
-      console.log(`[EMAIL] Confirmation sent to ${email} via Resend`);
+      console.log(`[EMAIL] Confirmation sent to ${email} via AWS SES`);
       return true;
 
     } else if (config.provider === 'sendgrid') {
@@ -154,6 +262,31 @@ The RuneSpoke Team`,
       }
 
       console.log(`[EMAIL] Confirmation sent to ${email} via SendGrid`);
+      return true;
+
+    } else if (config.provider === 'resend') {
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${config.apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: `RuneSpoke Hub <${config.fromEmail}>`,
+          to: [email],
+          subject: emailContent.subject,
+          text: emailContent.text,
+          html: emailContent.html,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        console.error('[EMAIL] Resend error:', error);
+        return false;
+      }
+
+      console.log(`[EMAIL] Confirmation sent to ${email} via Resend`);
       return true;
     }
 

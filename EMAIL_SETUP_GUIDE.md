@@ -43,7 +43,26 @@
 
 ## Adding Email Confirmations (Optional but Recommended)
 
-### Using Resend.com (Easiest - 100 free emails/day)
+### Option 1: Using AWS SES (Recommended if you have AWS)
+
+1. **Verify your email/domain in AWS SES:**
+   - Go to AWS SES Console → Verified identities
+   - Add `hello@runespoke.com` or verify entire `runespoke.com` domain
+   - Follow verification steps (email or DNS)
+
+2. **Get out of sandbox mode (for production):**
+   - New AWS accounts start in sandbox mode
+   - Request production access in SES console
+
+3. **Add to Vercel Environment Variables:**
+   - `AWS_ACCESS_KEY_ID = your-access-key`
+   - `AWS_SECRET_ACCESS_KEY = your-secret-key`
+   - `AWS_REGION = us-east-1` (or your preferred region)
+   - `AWS_SES_FROM_EMAIL = hello@runespoke.com`
+
+4. **Redeploy** - Users now get confirmation emails!
+
+### Option 2: Using Resend.com (Easiest - 100 free emails/day)
 
 1. **Sign up at [Resend.com](https://resend.com)** (free)
 2. **Get your API key:**
