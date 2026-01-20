@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 // Database types
 export interface WaitlistEntry {
@@ -9,14 +9,27 @@ export interface WaitlistEntry {
   unsubscribed?: boolean;
 }
 
-// Create Supabase client
-export const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-);
+// Create Supabase client (with proper initialization)
+function createSupabaseClient(): SupabaseClient | null {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!url || !key) {
+    console.warn('[SUPABASE] Missing credentials, some features may not work');
+    return null;
+  }
+
+  return createClient(url, key);
+}
+
+export const supabase = createSupabaseClient();
 
 // Waitlist functions
 export async function addToWaitlist(email: string): Promise<{ success: boolean; error?: string }> {
+  if (!supabase) {
+    return { success: false, error: 'Database not configured' };
+  }
+
   try {
     // Check if already exists
     const { data: existing } = await supabase
@@ -55,6 +68,10 @@ export async function addToWaitlist(email: string): Promise<{ success: boolean; 
 }
 
 export async function getWaitlistEntries(): Promise<WaitlistEntry[]> {
+  if (!supabase) {
+    return [];
+  }
+
   try {
     const { data, error } = await supabase
       .from('waitlist')
@@ -74,6 +91,10 @@ export async function getWaitlistEntries(): Promise<WaitlistEntry[]> {
 }
 
 export async function unsubscribeEmail(email: string): Promise<boolean> {
+  if (!supabase) {
+    return false;
+  }
+
   try {
     const { error } = await supabase
       .from('waitlist')
@@ -93,6 +114,10 @@ export async function unsubscribeEmail(email: string): Promise<boolean> {
 }
 
 export async function isUnsubscribed(email: string): Promise<boolean> {
+  if (!supabase) {
+    return false;
+  }
+
   try {
     const { data } = await supabase
       .from('waitlist')
