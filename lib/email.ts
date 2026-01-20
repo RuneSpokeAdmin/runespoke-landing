@@ -104,6 +104,28 @@ export async function sendWaitlistConfirmation(email: string): Promise<boolean> 
     return false;
   }
 
+  // Check if user has unsubscribed
+  if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+    try {
+      const checkResponse = await fetch(
+        `${process.env.KV_REST_API_URL}/sismember/unsubscribed:all/${email.toLowerCase()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
+          },
+        }
+      );
+      const data = await checkResponse.json();
+      if (data.result === 1) {
+        console.log(`[EMAIL] User ${email} has unsubscribed, skipping email`);
+        return false;
+      }
+    } catch (error) {
+      console.error('[EMAIL] Error checking unsubscribe status:', error);
+      // Continue anyway - better to send than not send
+    }
+  }
+
   const emailContent = {
     subject: 'Welcome to RuneSpoke Hub Beta Waitlist!',
     text: `Thank you for joining the RuneSpoke Hub Beta waitlist!
@@ -119,7 +141,15 @@ What you can expect:
 • Enterprise-grade security and compliance
 
 Best regards,
-The RuneSpoke Team`,
+The RuneSpoke Team
+
+---
+To unsubscribe from our waitlist, reply to this email with "UNSUBSCRIBE" or click:
+https://runespoke-landing.vercel.app/unsubscribe?email=${encodeURIComponent(email)}
+
+RuneSpoke Hub
+1234 Tech Boulevard, Suite 100
+San Francisco, CA 94105`,
     html: `
 <!DOCTYPE html>
 <html>
@@ -134,6 +164,8 @@ The RuneSpoke Team`,
     .footer { text-align: center; padding-top: 20px; color: #6b7280; font-size: 14px; }
     h1 { margin: 0; font-size: 28px; }
     .beta-badge { display: inline-block; background: #fbbf24; color: #000; padding: 5px 15px; border-radius: 20px; font-weight: bold; margin-bottom: 20px; }
+    .unsubscribe { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center; font-size: 11px; color: #9ca3af; }
+    .unsubscribe a { color: #6b7280; text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -160,6 +192,19 @@ The RuneSpoke Team`,
       <div class="footer">
         <p>Best regards,<br>The RuneSpoke Team</p>
         <p style="font-size: 12px;">If you have any questions, reach out to hello@runespoke.ai</p>
+      </div>
+
+      <div class="unsubscribe">
+        <p>You're receiving this because you signed up for the RuneSpoke Hub beta waitlist.</p>
+        <p>
+          <a href="https://runespoke-landing.vercel.app/unsubscribe?email=${encodeURIComponent(email)}">Unsubscribe</a> |
+          <a href="https://runespoke-landing.vercel.app/privacy">Privacy Policy</a>
+        </p>
+        <p>
+          RuneSpoke Hub<br>
+          1234 Tech Boulevard, Suite 100<br>
+          San Francisco, CA 94105
+        </p>
       </div>
     </div>
   </div>
