@@ -1,46 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Check } from 'lucide-react';
+import { useEmailModal } from '@/contexts/email-modal-context';
+import { ArrowRight } from 'lucide-react';
 
 export function HeroSection() {
-  const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [message, setMessage] = useState('');
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-
-    setStatus('loading');
-    try {
-      const response = await fetch('/api/waitlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setStatus('success');
-        setMessage('Thanks! We\'ll notify you when RuneSpoke Hub launches.');
-        setEmail('');
-        setTimeout(() => {
-          setStatus('idle');
-          setMessage('');
-        }, 5000);
-      } else {
-        setStatus('error');
-        setMessage(data.error || 'Something went wrong. Please try again.');
-      }
-    } catch (error) {
-      setStatus('error');
-      setMessage('Failed to join waitlist. Please try again.');
-    }
-  };
+  const { openModal } = useEmailModal();
 
   return (
     <section className="relative py-20 bg-gradient-to-br from-blue-50/80 via-indigo-50/80 to-purple-50/80 backdrop-blur-sm">
@@ -77,51 +42,49 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto"
+          className="flex flex-col sm:flex-row gap-4 justify-center"
         >
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 w-full">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email for early access"
-              required
-              disabled={status === 'loading' || status === 'success'}
-              className="flex-1 px-4 py-4 rounded-lg border border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all disabled:opacity-50"
-            />
-            <button
-              type="submit"
-              disabled={status === 'loading' || status === 'success'}
-              className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {status === 'loading' ? (
-                <span className="flex items-center justify-center">
-                  <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                  </svg>
-                  Joining...
-                </span>
-              ) : status === 'success' ? (
-                <span className="flex items-center justify-center">
-                  <Check className="w-5 h-5 mr-2" />
-                  Joined!
-                </span>
-              ) : (
-                'Get Early Access'
-              )}
-            </button>
-          </form>
-        </motion.div>
-        {message && (
-          <motion.p
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`mt-4 text-sm ${status === 'success' ? 'text-green-600' : 'text-red-600'}`}
+          <button
+            onClick={() => openModal('Get Early Access')}
+            className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center group"
           >
-            {message}
-          </motion.p>
-        )}
+            Get Early Access
+            <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+          </button>
+          <button
+            onClick={() => openModal('Request Demo')}
+            className="bg-white text-gray-900 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-50 transition-all shadow-lg border border-gray-200 hover:shadow-xl hover:scale-105"
+          >
+            Request Demo
+          </button>
+        </motion.div>
+
+        {/* Beta Features */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="mt-12 flex flex-wrap justify-center gap-6 text-sm text-gray-600"
+        >
+          <div className="flex items-center">
+            <svg className="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+            </svg>
+            90% Cost Savings
+          </div>
+          <div className="flex items-center">
+            <svg className="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Bring Your Own AI
+          </div>
+          <div className="flex items-center">
+            <svg className="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Enterprise Ready
+          </div>
+        </motion.div>
       </div>
     </section>
   );
