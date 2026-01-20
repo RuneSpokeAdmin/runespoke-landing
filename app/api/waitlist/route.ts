@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(
-      { message: 'Successfully joined the waitlist! We\'ll be in touch soon.' },
+      { message: 'Successfully joined the waitlist! Check your email for confirmation.' },
       { status: 200 }
     );
 
