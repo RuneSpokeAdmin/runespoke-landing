@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { sendWaitlistConfirmation } from '@/lib/email';
 
 // Email validation regex
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -69,8 +70,13 @@ export async function POST(request: NextRequest) {
     // Always log to Vercel as backup
     console.log(`[WAITLIST SIGNUP] Email: ${normalizedEmail}, Time: ${timestamp}`);
 
+    // Send confirmation email (non-blocking)
+    sendWaitlistConfirmation(normalizedEmail).catch(error => {
+      console.error('[EMAIL] Failed to send confirmation:', error);
+    });
+
     return NextResponse.json(
-      { message: 'Successfully joined the waitlist!' },
+      { message: 'Successfully joined the waitlist! Check your email for confirmation.' },
       { status: 200 }
     );
 

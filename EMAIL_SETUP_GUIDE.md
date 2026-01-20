@@ -46,10 +46,20 @@
 ### Using Resend.com (Easiest - 100 free emails/day)
 
 1. **Sign up at [Resend.com](https://resend.com)** (free)
-2. **Verify your domain** (hello@runespoke.com)
-3. **Get API key** from dashboard
-4. **Add to Vercel:**
-   - `RESEND_API_KEY = re_xxxxxxxxxxxxx`
+2. **Get your API key:**
+   - Go to [API Keys](https://resend.com/api-keys)
+   - Click "Create API Key"
+   - Give it a name like "RuneSpoke Beta"
+   - Copy the key (starts with `re_`)
+3. **Add to Vercel Environment Variables:**
+   - Go to Vercel Dashboard → Settings → Environment Variables
+   - Add: `RESEND_API_KEY = re_xxxxxxxxxxxxx`
+   - Add: `RESEND_FROM_EMAIL = hello@runespoke.com`
+4. **Domain Verification (Optional for custom domain):**
+   - If you want to send from @runespoke.com
+   - Go to Resend → Domains → Add Domain
+   - Follow DNS verification steps
+   - Otherwise emails will send from onboarding@resend.dev
 5. **Redeploy** - Users now get confirmation emails!
 
 ## How to View Collected Emails
