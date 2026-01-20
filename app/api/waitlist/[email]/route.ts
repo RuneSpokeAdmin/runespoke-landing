@@ -4,7 +4,7 @@ import { supabase } from '@/lib/supabase';
 // DELETE endpoint to remove email from waitlist
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { email: string } }
+  { params }: { params: Promise<{ email: string }> }
 ) {
   // Check authorization
   const authHeader = request.headers.get('authorization');
@@ -12,7 +12,8 @@ export async function DELETE(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const email = decodeURIComponent(params.email).toLowerCase();
+  const { email: emailParam } = await params;
+  const email = decodeURIComponent(emailParam).toLowerCase();
 
   try {
     // Try Supabase first
