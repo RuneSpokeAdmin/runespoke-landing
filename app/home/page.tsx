@@ -13,8 +13,6 @@ import { CTASection } from '@/components/home/cta-section';
 import { Footer } from '@/components/home/footer';
 
 export default function HomePage() {
-  const [isMonthly, setIsMonthly] = useState(true);
-
   return (
     <div className="min-h-screen relative">
       {/* Fixed background logo - clean and simple */}
@@ -40,7 +38,7 @@ export default function HomePage() {
           <IntegrationsSection />
           <ComparisonSection />
           <TestimonialsSection />
-          <PricingSection isMonthly={isMonthly} setIsMonthly={setIsMonthly} />
+          <PricingSection />
           <CTASection />
           <Footer />
         </div>
