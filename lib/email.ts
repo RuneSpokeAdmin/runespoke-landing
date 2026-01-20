@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { isUnsubscribed } from './supabase';
 
 interface EmailConfig {
   provider: 'aws-ses' | 'sendgrid' | 'resend' | 'none';
@@ -105,6 +106,20 @@ export async function sendWaitlistConfirmation(email: string): Promise<boolean> 
   }
 
   // Check if user has unsubscribed
+  // First check Supabase
+  if (process.env.NEXT_PUBLIC_SUPABASE_URL && (process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)) {
+    try {
+      const unsubscribed = await isUnsubscribed(email);
+      if (unsubscribed) {
+        console.log(`[EMAIL] User ${email} has unsubscribed (Supabase), skipping email`);
+        return false;
+      }
+    } catch (error) {
+      console.error('[EMAIL] Error checking Supabase unsubscribe status:', error);
+    }
+  }
+
+  // Then check KV as fallback
   if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
     try {
       const checkResponse = await fetch(
@@ -117,11 +132,11 @@ export async function sendWaitlistConfirmation(email: string): Promise<boolean> 
       );
       const data = await checkResponse.json();
       if (data.result === 1) {
-        console.log(`[EMAIL] User ${email} has unsubscribed, skipping email`);
+        console.log(`[EMAIL] User ${email} has unsubscribed (KV), skipping email`);
         return false;
       }
     } catch (error) {
-      console.error('[EMAIL] Error checking unsubscribe status:', error);
+      console.error('[EMAIL] Error checking KV unsubscribe status:', error);
       // Continue anyway - better to send than not send
     }
   }

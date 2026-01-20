@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendWaitlistConfirmation } from '@/lib/email';
+import { addToWaitlist, getWaitlistEntries } from '@/lib/supabase';
 
 // Email validation regex
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -19,8 +20,26 @@ export async function POST(request: NextRequest) {
     const normalizedEmail = email.toLowerCase();
     const timestamp = new Date().toISOString();
 
-    // Use Upstash Redis (auto-configured by Vercel)
-    if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+    // Try Supabase first (if configured)
+    let stored = false;
+    let alreadyExists = false;
+
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL && (process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)) {
+      console.log('[WAITLIST] Using Supabase for storage');
+      const result = await addToWaitlist(normalizedEmail);
+
+      if (result.success) {
+        stored = true;
+        console.log(`[SUPABASE] Waitlist signup stored: ${normalizedEmail}`);
+      } else if (result.error === 'Already on waitlist') {
+        alreadyExists = true;
+      } else {
+        console.error('[SUPABASE] Failed to store:', result.error);
+      }
+    }
+
+    // Fallback to Vercel KV if Supabase not configured or failed
+    if (!stored && !alreadyExists && process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
       try {
         // Check if email already exists
         const checkResponse = await fetch(
@@ -34,41 +53,46 @@ export async function POST(request: NextRequest) {
 
         const checkData = await checkResponse.json();
         if (checkData.result) {
-          return NextResponse.json(
-            { message: 'You\'re already on the waitlist!' },
-            { status: 200 }
+          alreadyExists = true;
+        } else {
+          // Store email with timestamp
+          await fetch(
+            `${process.env.KV_REST_API_URL}/set/waitlist:${normalizedEmail}/${timestamp}`,
+            {
+              headers: {
+                Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
+              },
+            }
           );
+
+          // Add to list for easy retrieval
+          await fetch(
+            `${process.env.KV_REST_API_URL}/sadd/waitlist:all/${normalizedEmail}`,
+            {
+              headers: {
+                Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
+              },
+            }
+          );
+
+          stored = true;
+          console.log(`[KV] Waitlist signup stored: ${normalizedEmail}`);
         }
-
-        // Store email with timestamp
-        await fetch(
-          `${process.env.KV_REST_API_URL}/set/waitlist:${normalizedEmail}/${timestamp}`,
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
-            },
-          }
-        );
-
-        // Add to list for easy retrieval
-        await fetch(
-          `${process.env.KV_REST_API_URL}/sadd/waitlist:all/${normalizedEmail}`,
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
-            },
-          }
-        );
-
-        console.log(`[STORED] Waitlist signup: ${normalizedEmail}`);
       } catch (error) {
-        console.error('[Storage Error]:', error);
-        // Continue anyway - still log it
+        console.error('[KV Storage Error]:', error);
       }
     }
 
     // Always log to Vercel as backup
     console.log(`[WAITLIST SIGNUP] Email: ${normalizedEmail}, Time: ${timestamp}`);
+
+    // Return appropriate response
+    if (alreadyExists) {
+      return NextResponse.json(
+        { message: 'You\'re already on the waitlist!' },
+        { status: 200 }
+      );
+    }
 
     // Send confirmation email (non-blocking)
     sendWaitlistConfirmation(normalizedEmail).catch(error => {
@@ -98,9 +122,22 @@ export async function GET(request: NextRequest) {
   }
 
   let emails: string[] = [];
+  let source = 'none';
 
-  // Get from Upstash Redis
-  if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+  // Try Supabase first
+  if (process.env.NEXT_PUBLIC_SUPABASE_URL && (process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)) {
+    try {
+      const entries = await getWaitlistEntries();
+      emails = entries.map(entry => entry.email);
+      source = 'Supabase (Persistent)';
+      console.log(`[ADMIN] Retrieved ${emails.length} emails from Supabase`);
+    } catch (error) {
+      console.error('[ADMIN] Supabase fetch error:', error);
+    }
+  }
+
+  // Fallback to Vercel KV if no Supabase data
+  if (emails.length === 0 && process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
     try {
       const response = await fetch(
         `${process.env.KV_REST_API_URL}/smembers/waitlist:all`,
@@ -113,15 +150,16 @@ export async function GET(request: NextRequest) {
       const data = await response.json();
       if (data.result) {
         emails = data.result;
+        source = 'Upstash Redis (Vercel KV)';
       }
     } catch (error) {
-      console.error('[Fetch Error]:', error);
+      console.error('[ADMIN] KV fetch error:', error);
     }
   }
 
   return NextResponse.json({
     emails,
     count: emails.length,
-    storage: process.env.KV_REST_API_URL ? 'Upstash Redis (Persistent)' : 'Logs Only'
+    storage: source
   });
 }

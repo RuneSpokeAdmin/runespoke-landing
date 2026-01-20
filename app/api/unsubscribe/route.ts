@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { unsubscribeEmail } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,8 +15,17 @@ export async function POST(request: NextRequest) {
     const normalizedEmail = email.toLowerCase();
     const timestamp = new Date().toISOString();
 
-    // Store unsubscribe request in KV
-    if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
+    // Try Supabase first
+    let unsubscribed = false;
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL && (process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)) {
+      unsubscribed = await unsubscribeEmail(normalizedEmail);
+      if (unsubscribed) {
+        console.log(`[SUPABASE] Email unsubscribed: ${normalizedEmail}`);
+      }
+    }
+
+    // Also store in KV if available (fallback)
+    if (!unsubscribed && process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
       try {
         // Add to unsubscribed list
         await fetch(
@@ -37,9 +47,9 @@ export async function POST(request: NextRequest) {
           }
         );
 
-        console.log(`[UNSUBSCRIBE] Email unsubscribed: ${normalizedEmail}`);
+        console.log(`[KV] Email unsubscribed: ${normalizedEmail}`);
       } catch (error) {
-        console.error('[UNSUBSCRIBE] Storage error:', error);
+        console.error('[KV] Unsubscribe storage error:', error);
       }
     }
 
