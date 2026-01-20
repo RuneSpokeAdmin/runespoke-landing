@@ -34,7 +34,7 @@ export async function getEmailConfig(): Promise<EmailConfig> {
   if (process.env.RESEND_API_KEY) {
     return {
       provider: 'resend',
-      fromEmail: process.env.RESEND_FROM_EMAIL || 'hello@runespoke.com',
+      fromEmail: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
       apiKey: process.env.RESEND_API_KEY
     };
   }
