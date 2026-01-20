@@ -39,10 +39,10 @@ export function Header() {
               />
             </Link>
           </div>
-          <div className="hidden sm:flex items-center space-x-4 md:space-x-8 text-gray-300 text-sm md:text-base">
+          <div className="flex items-center space-x-4 md:space-x-8 text-gray-300 text-xs sm:text-sm md:text-base">
             <span className="hidden md:inline">Documentation Coming Soon</span>
             <span className="hidden md:inline">•</span>
-            <span>hello@runespoke.ai</span>
+            <span>Contact: hello@runespoke.ai</span>
           </div>
         </div>
       </div>
