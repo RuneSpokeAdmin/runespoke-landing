@@ -110,7 +110,7 @@ export function PricingSection() {
             </span>
             <button
               onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
-              className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer"
             >
               <span
                 className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -204,7 +204,7 @@ export function PricingSection() {
 
               <button
                 onClick={() => openModal('Join Beta Program')}
-                className={`w-full py-3 px-6 rounded-lg font-semibold transition-all ${
+                className={`w-full py-3 px-6 rounded-lg font-semibold transition-all cursor-pointer ${
                   plan.popular
                     ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700'
                     : 'bg-gray-100 text-gray-900 hover:bg-gray-200'

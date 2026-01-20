@@ -68,7 +68,7 @@ export function EmailModal({ isOpen, onClose, triggerText = 'Get Early Access' }
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 cursor-pointer"
           />
 
           {/* Modal */}
@@ -81,7 +81,7 @@ export function EmailModal({ isOpen, onClose, triggerText = 'Get Early Access' }
             {/* Close button */}
             <button
               onClick={onClose}
-              className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors"
+              className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
             >
               <X className="w-6 h-6" />
             </button>
@@ -137,7 +137,7 @@ export function EmailModal({ isOpen, onClose, triggerText = 'Get Early Access' }
                 <button
                   type="submit"
                   disabled={status === 'loading'}
-                  className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {status === 'loading' ? (
                     <span className="flex items-center justify-center">

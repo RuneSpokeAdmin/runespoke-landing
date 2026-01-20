@@ -26,3 +26,16 @@ body {
     color: #171717 !important;
   }
 }
+
+/* Ensure all interactive elements have pointer cursor */
+button,
+a,
+[role="button"],
+[onclick],
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+button:disabled {
+  cursor: not-allowed !important;
+}
