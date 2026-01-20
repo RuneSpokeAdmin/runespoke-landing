@@ -1,7 +1,41 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Force light mode colors regardless of system preference */
+:root {
+  color-scheme: light;
+}
+
+html {
+  color-scheme: light !important;
+}
 
 body {
-  background: #ffffff;
-  color: #171717;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  color: #171717 !important;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Override any dark mode that Tailwind might apply */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    color-scheme: light !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #171717 !important;
+  }
+}
+
+/* Ensure all Tailwind utilities use light colors */
+* {
+  color-scheme: light;
 }
