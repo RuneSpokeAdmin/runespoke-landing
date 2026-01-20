@@ -42,7 +42,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center"
+          className="flex justify-center"
         >
           <button
             onClick={() => openModal('Get Early Access')}
@@ -50,12 +50,6 @@ export function HeroSection() {
           >
             Get Early Access
             <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-          </button>
-          <button
-            onClick={() => openModal('Request Demo')}
-            className="bg-white text-gray-900 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-50 transition-all shadow-lg border border-gray-200 hover:shadow-xl hover:scale-105"
-          >
-            Request Demo
           </button>
         </motion.div>
 
