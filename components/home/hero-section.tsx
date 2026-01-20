@@ -60,7 +60,7 @@ export function HeroSection() {
           transition={{ duration: 0.8, delay: 0.6 }}
           className="mt-12 text-center"
         >
-          <p className="text-sm text-gray-500 uppercase tracking-wide mb-3">Join 500+ developers already on the waitlist</p>
+          <p className="text-sm text-gray-500 uppercase tracking-wide mb-3">Join hundreds of developers already on the waitlist</p>
           <div className="flex flex-wrap justify-center gap-8 text-base font-medium text-gray-700">
             <span>No Platform Markup</span>
             <span className="text-gray-400">•</span>
