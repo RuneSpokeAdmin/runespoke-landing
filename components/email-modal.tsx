@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
+import { trackEmailSignup } from '@/components/google-analytics';
 
 interface EmailModalProps {
   isOpen: boolean;
@@ -43,6 +44,8 @@ export function EmailModal({ isOpen, onClose, triggerText = 'Get Early Access' }
       if (response.ok) {
         setStatus('success');
         setMessage(data.message || 'Thanks! We\'ll notify you when RuneSpoke Hub launches.');
+        // Track successful signup with Google Analytics
+        trackEmailSignup(email);
         setTimeout(() => {
           onClose();
         }, 3000);

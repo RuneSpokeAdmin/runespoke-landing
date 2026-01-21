@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { EmailModalProvider } from "@/contexts/email-modal-context";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { GoogleAnalytics } from "@/components/google-analytics";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -34,6 +35,7 @@ export default function RootLayout({
           {children}
           <Analytics />
           <SpeedInsights />
+          <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || ''} />
         </EmailModalProvider>
       </body>
     </html>
