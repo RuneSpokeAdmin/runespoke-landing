@@ -18,7 +18,7 @@ export async function getEmailConfig(): Promise<EmailConfig> {
       fromEmail: process.env.AWS_SES_FROM_EMAIL || 'hello@runespoke.ai',
       awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID,
       awsSecretKey: process.env.AWS_SECRET_ACCESS_KEY,
-      awsRegion: process.env.AWS_REGION || 'us-east-1'
+      awsRegion: process.env.AWS_REGION || 'us-east-2'
     };
   }
 
@@ -226,7 +226,7 @@ Walnut Creek, CA 94596`,
   try {
     if (config.provider === 'aws-ses') {
       console.log(`[EMAIL] Attempting to send via AWS SES to ${email}`);
-      const region = config.awsRegion || 'us-east-1';
+      const region = config.awsRegion || 'us-east-2';
       const service = 'ses';
       const host = `email.${region}.amazonaws.com`;
       const endpoint = `https://${host}/v2/email/outbound-emails`;
