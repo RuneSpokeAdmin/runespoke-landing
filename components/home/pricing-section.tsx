@@ -60,7 +60,7 @@ const pricingPlans = [
       'All integrations + custom',
       'Advanced security (SSO, SAML)',
       'Role-based access control',
-      'Unlimited users',
+      'Custom AI model training',
       'Custom integrations',
       'White-label options',
       'On-premises deployment',
