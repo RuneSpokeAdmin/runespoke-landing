@@ -121,7 +121,7 @@ export function PricingSection() {
             <span className={`ml-3 ${billingCycle === 'yearly' ? 'text-gray-900 font-semibold' : 'text-gray-500'}`}>
               Yearly
               <span className="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
-                Best Value
+                Save 20%
               </span>
             </span>
           </div>
