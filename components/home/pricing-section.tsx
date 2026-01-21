@@ -8,7 +8,7 @@ const pricingPlans = [
   {
     id: 'starter',
     name: 'Starter',
-    price: { monthly: 29, yearly: 290 },
+    price: { monthly: 'TBD', yearly: 'TBD' },
     betaPrice: 'Free',
     description: 'Perfect for individuals and small teams getting started.',
     features: [
@@ -27,7 +27,7 @@ const pricingPlans = [
   {
     id: 'professional',
     name: 'Professional',
-    price: { monthly: 99, yearly: 990 },
+    price: { monthly: 'TBD', yearly: 'TBD' },
     betaPrice: 'Free',
     description: 'Ideal for growing teams that need advanced automation.',
     features: [
@@ -51,7 +51,7 @@ const pricingPlans = [
   {
     id: 'enterprise',
     name: 'Enterprise',
-    price: { monthly: 299, yearly: 2990 },
+    price: { monthly: 'TBD', yearly: 'TBD' },
     betaPrice: 'Free',
     description: 'For large organizations with specific requirements.',
     features: [
@@ -121,7 +121,7 @@ export function PricingSection() {
             <span className={`ml-3 ${billingCycle === 'yearly' ? 'text-gray-900 font-semibold' : 'text-gray-500'}`}>
               Yearly
               <span className="ml-2 inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
-                Save 20%
+                Best Value
               </span>
             </span>
           </div>
@@ -166,21 +166,16 @@ export function PricingSection() {
                 <div className="bg-gray-50 rounded-lg p-3 mb-4">
                   <p className="text-xs text-gray-500 mb-1">After beta (50% off forever):</p>
                   <div className="flex items-baseline">
-                    <span className="text-lg font-semibold text-gray-900 line-through mr-2">
-                      ${billingCycle === 'monthly' ? plan.price.monthly : Math.floor(plan.price.yearly / 12)}
-                    </span>
                     <span className="text-2xl font-bold text-blue-600">
-                      ${billingCycle === 'monthly' ? Math.floor(plan.price.monthly / 2) : Math.floor(plan.price.yearly / 24)}
+                      $TBD
                     </span>
                     <span className="text-sm text-gray-600 ml-1">
                       /month/user
                     </span>
                   </div>
-                  {billingCycle === 'yearly' && (
-                    <p className="text-xs text-green-600 mt-1">
-                      Billed ${Math.floor(plan.price.yearly / 2)}/year/user
-                    </p>
-                  )}
+                  <p className="text-xs text-gray-500 mt-1">
+                    Pricing to be announced - Beta testers get 50% off
+                  </p>
                 </div>
 
                 {/* Enterprise suite notice */}
