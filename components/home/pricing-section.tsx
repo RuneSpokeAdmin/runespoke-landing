@@ -13,7 +13,7 @@ const pricingPlans = [
     description: 'Perfect for individuals and small teams getting started.',
     features: [
       '5 active workflows',
-      '1,000 AI requests/month',
+      '1,000 automation runs/month',
       'Basic integrations (GitHub, Slack)',
       'IDE extensions',
       'AI chat assistant',
@@ -32,7 +32,7 @@ const pricingPlans = [
     description: 'Ideal for growing teams that need advanced automation.',
     features: [
       '50 active workflows',
-      '10,000 AI requests/month',
+      '10,000 automation runs/month',
       'All integrations (20+ services)',
       'Cloud provider management',
       'Container management',
@@ -56,7 +56,7 @@ const pricingPlans = [
     description: 'For large organizations with specific requirements.',
     features: [
       'Unlimited workflows',
-      'Unlimited AI requests',
+      'Unlimited automation runs',
       'All integrations + custom',
       'Advanced security (SSO, SAML)',
       'Role-based access control',
