@@ -106,6 +106,7 @@ export async function sendWaitlistConfirmation(email: string): Promise<boolean> 
   if (process.env.NEXT_PUBLIC_SUPABASE_URL && (process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)) {
     try {
       const unsubscribed = await isUnsubscribed(email);
+      console.log(`[EMAIL] Supabase unsubscribe check for ${email}: ${unsubscribed}`);
       if (unsubscribed) {
         console.log(`[EMAIL] User ${email} has unsubscribed (Supabase), skipping email`);
         return false;
@@ -113,6 +114,8 @@ export async function sendWaitlistConfirmation(email: string): Promise<boolean> 
     } catch (error) {
       console.error('[EMAIL] Error checking Supabase unsubscribe status:', error);
     }
+  } else {
+    console.log('[EMAIL] Supabase not configured for unsubscribe check');
   }
 
   // Then check KV as fallback
