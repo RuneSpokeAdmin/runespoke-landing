@@ -100,6 +100,8 @@ function createAWSSignature(
 export async function sendWaitlistConfirmation(email: string): Promise<boolean> {
   const config = await getEmailConfig();
 
+  console.log('[EMAIL] Provider:', config.provider, 'From:', config.fromEmail);
+
   if (config.provider === 'none') {
     console.log('[EMAIL] No email provider configured, skipping confirmation');
     return false;
@@ -160,7 +162,7 @@ The RuneSpoke Team
 
 ---
 To unsubscribe from our waitlist, reply to this email with "UNSUBSCRIBE" or click:
-https://runespoke-landing.vercel.app/unsubscribe?email=${encodeURIComponent(email)}
+https://runespoke.ai/unsubscribe?email=${encodeURIComponent(email)}
 
 RuneSpoke Hub
 1250 - I Newell Ave #318
@@ -212,8 +214,8 @@ Walnut Creek, CA 94596`,
       <div class="unsubscribe">
         <p>You're receiving this because you signed up for the RuneSpoke Hub beta waitlist.</p>
         <p>
-          <a href="https://runespoke-landing.vercel.app/unsubscribe?email=${encodeURIComponent(email)}">Unsubscribe</a> |
-          <a href="https://runespoke-landing.vercel.app/privacy">Privacy Policy</a>
+          <a href="https://runespoke.ai/unsubscribe?email=${encodeURIComponent(email)}">Unsubscribe</a> |
+          <a href="https://runespoke.ai/privacy">Privacy Policy</a>
         </p>
         <p>
           RuneSpoke Hub<br>
@@ -229,6 +231,7 @@ Walnut Creek, CA 94596`,
 
   try {
     if (config.provider === 'aws-ses') {
+      console.log(`[EMAIL] Attempting to send via AWS SES to ${email}`);
       const region = config.awsRegion || 'us-east-1';
       const service = 'ses';
       const host = `email.${region}.amazonaws.com`;
