@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import { isUnsubscribed } from './supabase';
 
 interface EmailConfig {
-  provider: 'aws-ses' | 'sendgrid' | 'resend' | 'none';
+  provider: 'aws-ses' | 'sendgrid' | 'none';
   fromEmail: string;
   apiKey?: string;
   awsAccessKeyId?: string;
@@ -22,7 +22,7 @@ export async function getEmailConfig(): Promise<EmailConfig> {
     };
   }
 
-  // Check for SendGrid
+  // Check for SendGrid (backup option)
   if (process.env.SENDGRID_API_KEY) {
     return {
       provider: 'sendgrid',
@@ -31,14 +31,8 @@ export async function getEmailConfig(): Promise<EmailConfig> {
     };
   }
 
-  // Check for Resend
-  if (process.env.RESEND_API_KEY) {
-    return {
-      provider: 'resend',
-      fromEmail: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
-      apiKey: process.env.RESEND_API_KEY
-    };
-  }
+  // Resend is DISABLED - using AWS SES in production
+  // Even if RESEND_API_KEY exists, it will be ignored
 
   return {
     provider: 'none',
@@ -326,32 +320,9 @@ Walnut Creek, CA 94596`,
 
       console.log(`[EMAIL] Confirmation sent to ${email} via SendGrid`);
       return true;
-
-    } else if (config.provider === 'resend') {
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${config.apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from: `RuneSpoke Hub <${config.fromEmail}>`,
-          to: [email],
-          subject: emailContent.subject,
-          text: emailContent.text,
-          html: emailContent.html,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.text();
-        console.error('[EMAIL] Resend error:', error);
-        return false;
-      }
-
-      console.log(`[EMAIL] Confirmation sent to ${email} via Resend`);
-      return true;
     }
+
+    // Resend is DISABLED - we only use AWS SES in production
 
     return false;
   } catch (error) {

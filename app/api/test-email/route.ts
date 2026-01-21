@@ -14,8 +14,9 @@ export async function GET(request: NextRequest) {
     AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY ? '✓ Set' : '✗ Not set',
     AWS_REGION: process.env.AWS_REGION || 'Not set',
     AWS_SES_FROM_EMAIL: process.env.AWS_SES_FROM_EMAIL || 'Not set',
-    RESEND_API_KEY: process.env.RESEND_API_KEY ? '✓ Set' : '✗ Not set',
+    SENDGRID_API_KEY: process.env.SENDGRID_API_KEY ? '✓ Set (backup)' : '✗ Not set',
     SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ? '✓ Set' : '✗ Not set',
+    NOTE: 'Resend is DISABLED - Using AWS SES in production'
   };
 
   // Try to send a test email
