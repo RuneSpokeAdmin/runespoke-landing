@@ -256,7 +256,8 @@ Walnut Creek, CA 94596`,
         Destination: {
           ToAddresses: [email]
         },
-        FromEmailAddress: `RuneSpoke Hub <${config.fromEmail}>`
+        FromEmailAddress: config.fromEmail, // Use simple email without name for better deliverability
+        ReplyToAddresses: [config.fromEmail]
       };
 
       console.log('[EMAIL] SES payload FromEmailAddress:', sesPayload.FromEmailAddress);
