@@ -21,10 +21,12 @@
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "@aws-sdk/client-sesv2": "^3.972.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.2.3",
     "png-to-ico": "^3.0.1",
     "tailwindcss": "^4",
     "typescript": "^5"

@@ -231,7 +231,7 @@ Walnut Creek, CA 94596`,
       const host = `email.${region}.amazonaws.com`;
       const endpoint = `https://${host}/v2/email/outbound-emails`;
 
-      const payload = JSON.stringify({
+      const sesPayload = {
         Content: {
           Simple: {
             Body: {
@@ -254,9 +254,18 @@ Walnut Creek, CA 94596`,
           ToAddresses: [email]
         },
         FromEmailAddress: `RuneSpoke Hub <${config.fromEmail}>`
-      });
+      };
 
-      const datetime = new Date().toISOString().replace(/[:-]|\.\d{3}/g, '');
+      console.log('[EMAIL] SES payload FromEmailAddress:', sesPayload.FromEmailAddress);
+      console.log('[EMAIL] SES payload ToAddresses:', sesPayload.Destination.ToAddresses);
+
+      const payload = JSON.stringify(sesPayload);
+
+      // Format datetime properly for AWS: YYYYMMDDTHHMMSSZ
+      const now = new Date();
+      const datetime = now.toISOString().replace(/[:-]|\.\d{3}/g, '').replace(/Z$/, '') + 'Z';
+      console.log('[EMAIL] AWS datetime:', datetime);
+
       const headers: Record<string, string> = {
         'content-type': 'application/json',
         'host': host,
@@ -279,15 +288,22 @@ Walnut Creek, CA 94596`,
 
       headers['Authorization'] = `AWS4-HMAC-SHA256 Credential=${config.awsAccessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
 
+      console.log('[EMAIL] AWS SES endpoint:', endpoint);
+      console.log('[EMAIL] AWS SES headers:', JSON.stringify(headers, null, 2));
+
       const response = await fetch(endpoint, {
         method: 'POST',
         headers,
         body: payload
       });
 
+      const responseText = await response.text();
+      console.log('[EMAIL] AWS SES response status:', response.status);
+      console.log('[EMAIL] AWS SES response:', responseText);
+
       if (!response.ok) {
-        const error = await response.text();
-        console.error('[EMAIL] AWS SES error:', error);
+        console.error('[EMAIL] AWS SES error:', responseText);
+        console.error('[EMAIL] Response headers:', Object.fromEntries(response.headers.entries()));
         return false;
       }
 
@@ -327,6 +343,8 @@ Walnut Creek, CA 94596`,
     return false;
   } catch (error) {
     console.error('[EMAIL] Error sending confirmation:', error);
+    console.error('[EMAIL] Error stack:', error instanceof Error ? error.stack : 'No stack');
+    console.error('[EMAIL] Error details:', JSON.stringify(error, null, 2));
     return false;
   }
 }
