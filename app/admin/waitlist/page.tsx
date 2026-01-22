@@ -265,7 +265,7 @@ export default function WaitlistAdmin() {
               <strong>Quick Links:</strong>
             </p>
             <ul className="text-sm text-blue-600 space-y-1 mt-1">
-              <li>• <a href="https://app.supabase.com/project/hfmxaonbljzffkhdjyvv/editor/29415" target="_blank" rel="noopener" className="underline hover:text-blue-800">View in Supabase Table Editor</a></li>
+              <li>• <a href="https://supabase.com/dashboard/project/hfmxaonbljzffkhdjyvv/editor/164281?schema=public" target="_blank" rel="noopener" className="underline hover:text-blue-800">View in Supabase Table Editor</a></li>
               <li>• <a href="https://vercel.com" target="_blank" rel="noopener" className="underline hover:text-blue-800">Check Vercel Logs</a></li>
               <li>• <a href="/" className="underline hover:text-blue-800">Back to Home</a></li>
             </ul>
