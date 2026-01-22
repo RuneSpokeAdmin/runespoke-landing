@@ -1,35 +1,29 @@
 # 📧 Waitlist Email Collection Setup
 
 ## Current Status
-Emails are currently logged to Vercel's function logs but **NOT permanently stored**.
+Emails are stored in **Supabase PostgreSQL database** for persistent storage.
 
-## How to Access Emails Now
+## How to Access Emails
 
-### Option 1: Vercel Dashboard (Immediate Access)
+### Option 1: Admin Dashboard
+1. Visit: https://runespoke.ai/admin/waitlist
+2. Enter your secret key (set in `WAITLIST_SECRET` environment variable)
+3. View, delete, or export emails as CSV
+
+### Option 2: Supabase Dashboard
+1. Go to your [Supabase Dashboard](https://app.supabase.com)
+2. Navigate to Table Editor → waitlist
+3. View all email signups directly in the database
+
+### Option 3: Vercel Logs (Backup)
 1. Go to [Vercel Dashboard](https://vercel.com)
 2. Select your `runespoke-landing` project
-3. Click on "Functions" tab
-4. Click on "api/waitlist"
-5. View "Logs" - all email signups are logged with `[WAITLIST SIGNUP]` prefix
+3. Click on "Functions" tab → "api/waitlist"
+4. View "Logs" - all signups are logged with `[WAITLIST SIGNUP]` prefix
 
-### Option 2: Admin Page (After setting secret)
-1. Set environment variable in Vercel:
-   - Go to Settings → Environment Variables
-   - Add: `WAITLIST_SECRET` = `your-secret-key-here`
-   - Redeploy
+## Required Setup
 
-2. Visit: https://runespoke-landing.vercel.app/admin/waitlist
-3. Enter your secret key to view emails
-
-## Setting Up Persistent Storage
-
-### Quick Option 1: Use Webhook (5 minutes)
-1. Create free webhook at [webhook.site](https://webhook.site) or [Zapier](https://zapier.com)
-2. In `/app/api/waitlist/route.ts`, uncomment lines 27-32
-3. Replace `YOUR_WEBHOOK_URL` with your webhook URL
-4. Deploy - emails will now be sent to your webhook/Zapier
-
-### Option 2: Use Your Existing Supabase (10 minutes)
+### Database Configuration (Required)
 
 1. **Create waitlist table in Supabase:**
 ```sql
@@ -42,29 +36,45 @@ CREATE TABLE waitlist (
 
 2. **Add environment variables to Vercel:**
    - `NEXT_PUBLIC_SUPABASE_URL` = your-supabase-url
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = your-anon-key
    - `SUPABASE_SERVICE_KEY` = your-service-key (from Supabase settings)
+   - `WAITLIST_SECRET` = your-admin-secret-key
 
-3. **Enable Supabase in the API:**
-   - In `/app/api/waitlist/route.ts`, uncomment lines 34-47
-   - Deploy
+3. **Redeploy** the application after adding environment variables
 
-4. **View emails in Supabase:**
-   - Go to your Supabase dashboard
-   - Navigate to Table Editor → waitlist
-   - All emails will be stored there
+## Email Notifications
 
-### Option 3: Use Vercel KV (Redis) - Recommended
-1. Go to Vercel Dashboard → Storage → Create Database
-2. Select "KV" (Redis)
-3. Follow setup instructions
-4. Emails will persist between deploys
+### AWS SES Configuration (Production Ready)
+The application uses AWS SES for sending confirmation emails:
+- Region: `us-east-2` (Ohio)
+- Production access already enabled
+- SPF/DKIM records configured for runespoke.ai
 
-## Quick Email Export
+Environment variables needed:
+- `AWS_ACCESS_KEY_ID` = your-aws-key
+- `AWS_SECRET_ACCESS_KEY` = your-aws-secret
+- `AWS_REGION` = us-east-2
+- `AWS_SES_FROM_EMAIL` = hello@runespoke.ai
 
-To export current session emails (until you set up persistence):
-1. Visit: `/admin/waitlist`
-2. Enter your secret key
-3. Click "Download CSV"
+## Features
+
+### Admin Panel
+- View all waitlist emails
+- Delete individual emails
+- Bulk delete all emails
+- Export to CSV
+- Real-time storage status
+
+### API Endpoints
+- `POST /api/waitlist` - Add email to waitlist
+- `GET /api/waitlist` - Retrieve all emails (requires auth)
+- `DELETE /api/waitlist/[email]` - Remove email (requires auth)
+
+## Security
+- Admin endpoints protected with bearer token authentication
+- Emails normalized to lowercase to prevent duplicates
+- Email validation before storage
+- CORS protection on all endpoints
 
 ## Need Help?
 Contact: hello@runespoke.ai

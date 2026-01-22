@@ -20,67 +20,30 @@ export async function POST(request: NextRequest) {
     const normalizedEmail = email.toLowerCase();
     const timestamp = new Date().toISOString();
 
-    // Try Supabase first (if configured)
-    let stored = false;
+    // Store in Supabase
     let alreadyExists = false;
 
     if (process.env.NEXT_PUBLIC_SUPABASE_URL && (process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)) {
-      console.log('[WAITLIST] Using Supabase for storage');
+      console.log('[WAITLIST] Storing in Supabase');
       const result = await addToWaitlist(normalizedEmail);
 
       if (result.success) {
-        stored = true;
         console.log(`[SUPABASE] Waitlist signup stored: ${normalizedEmail}`);
       } else if (result.error === 'Already on waitlist') {
         alreadyExists = true;
       } else {
         console.error('[SUPABASE] Failed to store:', result.error);
-      }
-    }
-
-    // Fallback to Vercel KV if Supabase not configured or failed
-    if (!stored && !alreadyExists && process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
-      try {
-        // Check if email already exists
-        const checkResponse = await fetch(
-          `${process.env.KV_REST_API_URL}/get/waitlist:${normalizedEmail}`,
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
-            },
-          }
+        return NextResponse.json(
+          { error: 'Failed to process request. Please try again.' },
+          { status: 500 }
         );
-
-        const checkData = await checkResponse.json();
-        if (checkData.result) {
-          alreadyExists = true;
-        } else {
-          // Store email with timestamp
-          await fetch(
-            `${process.env.KV_REST_API_URL}/set/waitlist:${normalizedEmail}/${timestamp}`,
-            {
-              headers: {
-                Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
-              },
-            }
-          );
-
-          // Add to list for easy retrieval
-          await fetch(
-            `${process.env.KV_REST_API_URL}/sadd/waitlist:all/${normalizedEmail}`,
-            {
-              headers: {
-                Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
-              },
-            }
-          );
-
-          stored = true;
-          console.log(`[KV] Waitlist signup stored: ${normalizedEmail}`);
-        }
-      } catch (error) {
-        console.error('[KV Storage Error]:', error);
       }
+    } else {
+      console.error('[WAITLIST] Supabase not configured');
+      return NextResponse.json(
+        { error: 'Service temporarily unavailable. Please try again later.' },
+        { status: 503 }
+      );
     }
 
     // Always log to Vercel as backup
@@ -121,45 +84,29 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  let emails: string[] = [];
-  let source = 'none';
-
-  // Try Supabase first
+  // Get emails from Supabase
   if (process.env.NEXT_PUBLIC_SUPABASE_URL && (process.env.SUPABASE_SERVICE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)) {
     try {
       const entries = await getWaitlistEntries();
-      emails = entries.map(entry => entry.email);
-      source = 'Supabase (Persistent)';
+      const emails = entries.map(entry => entry.email);
       console.log(`[ADMIN] Retrieved ${emails.length} emails from Supabase`);
+
+      return NextResponse.json({
+        emails,
+        count: emails.length,
+        storage: 'Supabase'
+      });
     } catch (error) {
       console.error('[ADMIN] Supabase fetch error:', error);
-    }
-  }
-
-  // Fallback to Vercel KV if no Supabase data
-  if (emails.length === 0 && process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
-    try {
-      const response = await fetch(
-        `${process.env.KV_REST_API_URL}/smembers/waitlist:all`,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
-          },
-        }
+      return NextResponse.json(
+        { error: 'Failed to retrieve waitlist' },
+        { status: 500 }
       );
-      const data = await response.json();
-      if (data.result) {
-        emails = data.result;
-        source = 'Upstash Redis (Vercel KV)';
-      }
-    } catch (error) {
-      console.error('[ADMIN] KV fetch error:', error);
     }
   }
 
-  return NextResponse.json({
-    emails,
-    count: emails.length,
-    storage: source
-  });
+  return NextResponse.json(
+    { error: 'Database not configured' },
+    { status: 503 }
+  );
 }

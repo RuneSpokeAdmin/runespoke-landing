@@ -16,7 +16,7 @@ export async function DELETE(
   const email = decodeURIComponent(emailParam).toLowerCase();
 
   try {
-    // Try Supabase first
+    // Delete from Supabase
     if (supabase) {
       const { error } = await supabase
         .from('waitlist')
@@ -31,41 +31,16 @@ export async function DELETE(
         });
       } else {
         console.error('[ADMIN] Supabase delete error:', error);
+        return NextResponse.json(
+          { error: 'Failed to delete email' },
+          { status: 500 }
+        );
       }
     }
 
-    // Try Vercel KV as fallback
-    if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
-      // Remove from main set
-      await fetch(
-        `${process.env.KV_REST_API_URL}/srem/waitlist:all/${email}`,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
-          },
-        }
-      );
-
-      // Delete the key
-      await fetch(
-        `${process.env.KV_REST_API_URL}/del/waitlist:${email}`,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.KV_REST_API_TOKEN}`,
-          },
-        }
-      );
-
-      console.log(`[ADMIN] Deleted email from KV: ${email}`);
-      return NextResponse.json({
-        message: 'Email deleted successfully',
-        storage: 'Vercel KV'
-      });
-    }
-
     return NextResponse.json(
-      { error: 'No storage backend available' },
-      { status: 500 }
+      { error: 'Database not configured' },
+      { status: 503 }
     );
 
   } catch (error) {

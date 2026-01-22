@@ -256,10 +256,9 @@ export default function WaitlistAdmin() {
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <h3 className="font-semibold text-blue-800 mb-2">ℹ️ System Information</h3>
           <div className="text-sm text-blue-700 space-y-1">
-            <p><strong>Primary Storage:</strong> Supabase PostgreSQL (persistent)</p>
-            <p><strong>Fallback Storage:</strong> Vercel KV/Upstash Redis</p>
+            <p><strong>Storage:</strong> Supabase PostgreSQL (persistent database)</p>
             <p><strong>Backup:</strong> All signups logged in Vercel Functions</p>
-            <p><strong>Email Service:</strong> AWS SES (waiting for production approval)</p>
+            <p><strong>Email Service:</strong> AWS SES (production enabled in us-east-2)</p>
           </div>
           <div className="mt-3 pt-3 border-t border-blue-200">
             <p className="text-sm text-blue-700">
