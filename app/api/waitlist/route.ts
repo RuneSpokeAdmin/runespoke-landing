@@ -57,10 +57,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Send confirmation email (non-blocking)
-    sendWaitlistConfirmation(normalizedEmail).catch(error => {
+    // Send confirmation email (must await in Vercel serverless)
+    try {
+      const emailSent = await sendWaitlistConfirmation(normalizedEmail);
+      console.log(`[EMAIL] Send result for ${normalizedEmail}: ${emailSent}`);
+    } catch (error) {
       console.error('[EMAIL] Failed to send confirmation:', error);
-    });
+      // Don't fail the signup if email fails - user is already in database
+    }
 
     return NextResponse.json(
       { message: 'Successfully joined the waitlist! Check your email for confirmation.' },
