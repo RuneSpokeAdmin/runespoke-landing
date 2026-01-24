@@ -103,7 +103,7 @@ export default function BetaLanding() {
                 </Link>
               </div>
               <div className="flex items-center space-x-3 sm:space-x-4 md:space-x-6 text-gray-300 text-xs sm:text-sm md:text-base">
-                <Link href="/docs" className="hover:text-white transition-colors">
+                <Link href="/docs" className="hover:text-white transition-colors font-medium">
                   Docs
                 </Link>
                 <span>•</span>
