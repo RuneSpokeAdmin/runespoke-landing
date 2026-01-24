@@ -102,12 +102,13 @@ export default function BetaLanding() {
                   />
                 </Link>
               </div>
-              <div className="flex items-center space-x-4 md:space-x-8 text-gray-300 text-xs sm:text-sm md:text-base">
-                <Link href="/docs" className="hidden md:inline hover:text-white transition-colors">
-                  Documentation
+              <div className="flex items-center space-x-3 sm:space-x-4 md:space-x-6 text-gray-300 text-xs sm:text-sm md:text-base">
+                <Link href="/docs" className="hover:text-white transition-colors">
+                  Docs
                 </Link>
-                <span className="hidden md:inline">•</span>
-                <span>Contact: hello@runespoke.ai</span>
+                <span>•</span>
+                <span className="hidden sm:inline">Contact:</span>
+                <span>hello@runespoke.ai</span>
               </div>
             </div>
           </div>
