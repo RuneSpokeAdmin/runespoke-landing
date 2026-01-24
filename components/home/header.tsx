@@ -40,8 +40,10 @@ export function Header() {
             </Link>
           </div>
           <div className="flex items-center space-x-4 md:space-x-8 text-gray-300 text-xs sm:text-sm md:text-base">
-            <span className="hidden md:inline">Documentation Coming Soon</span>
-            <span className="hidden md:inline">•</span>
+            <Link href="/docs" className="hover:text-white transition-colors">
+              Docs
+            </Link>
+            <span>•</span>
             <span>Contact: hello@runespoke.ai</span>
           </div>
         </div>
