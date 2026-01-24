@@ -1,6 +1,5 @@
 'use client';
 
-import { ProtectedRoute } from '@/components/auth/protected-route';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
